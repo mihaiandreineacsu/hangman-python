@@ -11,6 +11,18 @@ if MAX_ATTEMPTS < MIN_ATTEMPTS:
 
 
 def get_words_list(words_list: str) -> list[str]:
+    """
+    Extracts the words from given "words_list" file path.
+
+    Raises:
+
+        argparse.ArgumentTypeError: If the given file does not exist, is empty or not a TXT file.
+
+    Returns:
+
+        list[str]: A list of words from the given "word_list" file path.
+    """
+
     if not words_list.endswith(".txt"):
         raise argparse.ArgumentTypeError(f"File '{words_list}' is not a TXT file!")
 
@@ -27,6 +39,18 @@ def get_words_list(words_list: str) -> list[str]:
 
 
 def init_args() -> argparse.Namespace:
+    """
+    Parses the arguments given when running the script.
+
+    Accepted arguments are:
+    - max_attempts: The maximal attempts to guess the word. (default: {MAX_ATTEMPTS})
+    - wordlist: A Textfile containing words to randomly pick the in game word to guess. (optional)
+
+    Returns:
+
+        argparse.Namespace: Parsed arguments
+    """
+
     parser = argparse.ArgumentParser(description="Play Hangman game")
     parser.add_argument(
         "--max_attempts",
@@ -47,13 +71,30 @@ def init_args() -> argparse.Namespace:
 
 
 def init_hangman() -> tuple[int, str]:
+    """
+    Initializes the game attempts and the word to guess.
+
+    Returns
+
+        tulpe[int, str]: remaining guess attempts and the word to guess.
+    """
+
     args = init_args()
     in_game_attempts = args.max_attempts or MAX_ATTEMPTS
     in_game_word = random.choice(args.wordlist or WORDS)
     return in_game_attempts, in_game_word
 
 
-def display_word(word: str, guesses: list[str]):
+def display_word(word: str, guesses: list[str]) -> str:
+    """
+    The word to guess showed to the player.
+    Any guesses letters are displayed.
+    Non guessed letters are showed as underscore "_".
+
+    Returns
+        str: a string that follows the patter '_ _ X _ Y _ _ Z'
+    """
+
     word_to_display = ""
     for letter in word:
         letter_to_display = letter if letter in guesses else "_"
@@ -63,6 +104,13 @@ def display_word(word: str, guesses: list[str]):
 
 
 def start_game(attempts: int, word: str):
+    """
+    Starts the game loop with given "attempts" to guess the given "word".
+
+    The game ends if:
+    - The player used up all given attempts. (Game Over!)
+    - The player guessed the given word. (Game Won!)
+    """
 
     guesses = []
 
